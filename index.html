@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Чёрный Кот | Сеть ваших любимых кофеен</title>
+    <style>
+        :root {
+            --bg: #1F150E;
+            --bg-card: #2A1E15;
+            --text: #F3E1D2;
+            --accent: #E07B4C;
+            --accent-glow: rgba(224, 123, 76, 0.5);
+            --border: #4A3627;
+            --radius: 20px;
+            --radius-sm: 14px;
+            --shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Roboto, system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 20% 10%, rgba(224, 123, 76, 0.15) 0%, transparent 55%),
+                radial-gradient(ellipse at 80% 70%, rgba(224, 140, 60, 0.1) 0%, transparent 55%),
+                radial-gradient(ellipse at 40% 90%, rgba(255, 160, 80, 0.08) 0%, transparent 50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 24px 30px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            margin-bottom: 28px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .logo-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon img,
+        .logo-icon svg {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+        }
+
+        .logo-text h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.3px;
+            line-height: 1.2;
+        }
+
+        .logo-text p {
+            font-size: 0.85rem;
+            color: #C9A98B;
+            font-weight: 500;
+        }
+
+        .tagline {
+            background: rgba(224, 123, 76, 0.15);
+            color: #F5C0A0;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: 1px solid rgba(224, 123, 76, 0.3);
+        }
+
+        .section {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 28px 24px;
+            margin-bottom: 28px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 20px;
+            padding-left: 14px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .address-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .address-card {
+            background: #362A1F;
+            border-radius: var(--radius-sm);
+            padding: 18px 16px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+
+        .address-card:hover {
+            background: #403224;
+            border-color: var(--accent);
+            box-shadow: 0 0 16px rgba(224, 123, 76, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .city-name {
+            font-weight: 700;
+            color: #F5B98A;
+            font-size: 1.1rem;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 6px var(--accent-glow);
+        }
+
+        .address-detail {
+            font-weight: 500;
+            color: #E0CBB5;
+            margin-bottom: 4px;
+        }
+
+        .work-time {
+            background: rgba(224, 123, 76, 0.15);
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #F5B98A;
+        }
+
+        .phone-number {
+            font-weight: 500;
+            color: #C9A98B;
+            margin-top: 6px;
+            font-size: 0.85rem;
+        }
+
+        .phone-number a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .map-hint-small {
+            font-size: 0.7rem;
+            color: #A88F7A;
+            margin-top: 8px;
+        }
+
+        /* ===== Меню ===== */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .menu-item {
+            background: #2F241A;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            transition: all 0.25s;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: visible;          /* <-- важно! теперь тултип не обрезается */
+            z-index: 1;
+        }
+
+        .menu-item:hover {
+            border-color: var(--accent);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            transform: translateY(-3px);
+            z-index: 50;                /* поднимаем карточку над соседями */
+        }
+
+        .menu-img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            display: block;
+            border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+        }
+
+        .menu-info {
+            padding: 14px 14px 16px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .menu-name {
+            font-weight: 700;
+            font-size: 1rem;
+            color: #F5E0D0;
+            margin-bottom: 4px;
+        }
+
+        .menu-desc {
+            font-size: 0.75rem;
+            color: #BBA595;
+            margin-bottom: 8px;
+        }
+
+        .menu-price {
+            font-weight: 800;
+            color: var(--accent);
+            font-size: 1.1rem;
+        }
+
+        /* Всплывающая подсказка */
+        .menu-tooltip {
+            position: absolute;
+            top: 0;
+            left: calc(100% + 12px);    /* чуть правее карточки */
+            width: 200px;
+            background: #3D3026;
+            color: #E0CBB5;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.78rem;
+            line-height: 1.4;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+            border: 1px solid var(--accent);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+            z-index: 60;
+            pointer-events: none;
+        }
+
+        .menu-item:hover .menu-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Показ тултипа на мобильных (класс .show-tooltip) */
+        .menu-item.show-tooltip .menu-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .tooltip-row {
+            margin-bottom: 4px;
+        }
+
+        .tooltip-label {
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        /* ===== Зёрна ===== */
+        .beans-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .bean-card {
+            background: #2F241A;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: 0.25s;
+        }
+
+        .bean-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 14px rgba(224, 123, 76, 0.2);
+        }
+
+        .bean-card img {
+            width: 100%;
+            height: 170px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .bean-card p {
+            text-align: center;
+            padding: 12px;
+            font-weight: 600;
+            color: #D4B08E;
+            background: #362A1F;
+        }
+
+        /* Карта */
+        .map-container {
+            width: 100%;
+            height: 400px;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            border: 2px solid var(--border);
+            margin-top: 12px;
+            background: #2F241A;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 24px 20px;
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: #A88F7A;
+            border-top: 1px solid var(--border);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 12px;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .menu-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 14px;
+            }
+            .menu-img {
+                height: 120px;
+            }
+            .map-container {
+                height: 300px;
+            }
+            /* Тултип на мобильных снизу */
+            .menu-tooltip {
+                top: 100%;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 180px;
+                margin-top: 6px;
+            }
+        }
+    </style>
+    <!-- Замените YOUR_API_KEY на реальный ключ Яндекс.Карт -->
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=YOUR_API_KEY&lang=ru_RU" type="text/javascript"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo-wrapper">
+                <div class="logo-icon" id="logoContainer"></div>
+                <div class="logo-text">
+                    <h1>Чёрный Кот</h1>
+                    <p>кофе и уют в каждой чашке</p>
+                </div>
+            </div>
+            <div class="tagline">Кофе с характером</div>
+        </header>
+
+        <section class="section">
+            <h2 class="section-title">📍 Наши кофейни</h2>
+            <div class="address-grid" id="addressContainer"></div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">☕ Меню</h2>
+            <div class="menu-grid" id="menuContainer"></div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">🫘 Ароматные зёрна</h2>
+            <div class="beans-gallery">
+                <div class="bean-card">
+                    <img src="https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=500&h=350&fit=crop" alt="Кофейные зерна" loading="lazy">
+                    <p>Отборная арабика</p>
+                </div>
+                <div class="bean-card">
+                    <img src="https://images.unsplash.com/photo-1487700160041-babef9c3cb55?w=500&h=350&fit=crop" alt="Свежая обжарка" loading="lazy">
+                    <p>Свежая обжарка</p>
+                </div>
+                <div class="bean-card">
+                    <img src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=500&h=350&fit=crop" alt="Кофе и ложка" loading="lazy">
+                    <p>Насыщенный вкус</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">🗺️ Кофейни на карте</h2>
+            <div id="yandexMap" class="map-container"></div>
+        </section>
+
+        <footer class="footer">
+            © 2026 Сеть кофеен «Чёрный Кот» ☕️ Тёплые встречи каждый день<br>
+            г. Макеевка, г. Харцызск
+        </footer>
+    </div>
+
+    <script>
+        // ⚙️ НАСТРОЙКИ
+        const customLogoUrl = "file:///C:/Users/zkus6/Pictures/photo_2026-02-02_19-00-03.jpg";   // Оставьте пустым для котёнка, или вставьте URL картинки
+
+        const coffeeSpots = [
+            { id: 0, city: "Макеевка", address: "ул. Ленина, 47", workTime: "с 9:00 до 21:00", coords: [48.043475, 37.963837], fullAddr: "г. Макеевка, ул. Ленина, 47", phone: "+7 (949) 000-00-01" },
+            { id: 1, city: "Макеевка (Солнечный)", address: "мкр. Солнечный, ул. Шевченко, 32а", workTime: "с 8:00 до 20:00", coords: [48.045342, 37.964933], fullAddr: "г. Макеевка, мкр. Солнечный, ул. Шевченко, 32а", phone: "+7 (949) 000-00-02" },
+            { id: 2, city: "Харцызск", address: "ул. Октябрьская, 34а", workTime: "с 8:00 до 19:00", coords: [48.036233, 38.155744], fullAddr: "г. Харцызск, ул. Октябрьская, 34а", phone: "+7 (949) 000-00-03" }
+        ];
+
+        const menuList = [
+            { name: "Эспрессо", desc: "Насыщенный, бархатный", price: "120 ₽", img: "https://images.unsplash.com/photo-1510707577719-ae7c14805e3a?w=400&h=260&fit=crop", composition: "100% арабика", calories: "5 ккал", prepTime: "2–3 мин" },
+            { name: "Капучино", desc: "Нежная пенка, какао", price: "200 ₽", img: "https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=400&h=260&fit=crop", composition: "эспрессо, молоко, какао-пудра", calories: "80 ккал", prepTime: "3–4 мин" },
+            { name: "Латте", desc: "Шелковистый, мягкий", price: "250 ₽", img: "https://images.unsplash.com/photo-1561882468-9110e03e0f78?w=400&h=260&fit=crop", composition: "эспрессо, молоко 3.2%", calories: "110 ккал", prepTime: "4 мин" },
+            { name: "Раф ванильный", desc: "Ароматная классика", price: "300 ₽", img: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400&h=260&fit=crop", composition: "сливки, эспрессо, ваниль", calories: "180 ккал", prepTime: "5 мин" },
+            { name: "Круассан", desc: "Масляный, хрустящий", price: "160 ₽", img: "https://images.unsplash.com/photo-1623334044303-241021148842?w=400&h=260&fit=crop", composition: "мука, масло, сахар", calories: "290 ккал", prepTime: "1–2 мин" },
+            { name: "Чизкейк", desc: "Нью-Йорк, сливочный", price: "350 ₽", img: "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?w=400&h=260&fit=crop", composition: "творожный сыр, сливки, песочный корж", calories: "410 ккал", prepTime: "1 мин" }
+        ];
+
+        let currentMap = null;
+        let placemarks = [];
+
+        function setupLogo() {
+            const logoContainer = document.getElementById('logoContainer');
+            if (!logoContainer) return;
+            if (customLogoUrl && customLogoUrl.trim() !== "") {
+                logoContainer.innerHTML = `<img src="${customLogoUrl}" alt="Логотип" style="width:100%;height:100%;object-fit:contain;">`;
+            } else {
+                logoContainer.innerHTML = `
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <ellipse cx="50" cy="82" rx="32" ry="8" fill="rgba(0,0,0,0.4)"/>
+                        <ellipse cx="50" cy="58" rx="32" ry="26" fill="#1a1a1a"/>
+                        <ellipse cx="50" cy="63" rx="22" ry="16" fill="#2a2522"/>
+                        <circle cx="42" cy="42" r="18" fill="#1a1a1a"/>
+                        <polygon points="30,28 26,10 38,24" fill="#1a1a1a"/>
+                        <polygon points="32,26 29,14 37,24" fill="#3d2b25"/>
+                        <polygon points="50,26 54,8 58,25" fill="#1a1a1a"/>
+                        <polygon points="51,25 53,12 56,24" fill="#3d2b25"/>
+                        <path d="M34 40 Q37 37 40 40" stroke="#f0d8c0" stroke-width="2" fill="none"/>
+                        <path d="M44 38 Q47 35 50 38" stroke="#f0d8c0" stroke-width="2" fill="none"/>
+                        <ellipse cx="42" cy="44" rx="3" ry="2" fill="#e89090"/>
+                        <path d="M40 47 Q42 49 44 47" stroke="#e89090" stroke-width="1.2" fill="none"/>
+                        <line x1="26" y1="44" x2="34" y2="43" stroke="#555" stroke-width="0.7"/>
+                        <line x1="25" y1="47" x2="33" y2="45" stroke="#555" stroke-width="0.7"/>
+                        <line x1="50" y1="43" x2="58" y2="40" stroke="#555" stroke-width="0.7"/>
+                        <line x1="50" y1="45" x2="59" y2="43" stroke="#555" stroke-width="0.7"/>
+                        <path d="M78 55 Q84 58 82 68 Q80 78 68 80 Q55 82 42 78" stroke="#1a1a1a" stroke-width="8" fill="none" stroke-linecap="round"/>
+                        <ellipse cx="60" cy="72" rx="7" ry="5" fill="#1a1a1a"/>
+                        <ellipse cx="36" cy="74" rx="6" ry="4" fill="#1a1a1a"/>
+                    </svg>
+                `;
+            }
+        }
+
+        function renderAddresses() {
+            const container = document.getElementById('addressContainer');
+            if (!container) return;
+            container.innerHTML = coffeeSpots.map(spot => `
+                <div class="address-card" data-id="${spot.id}">
+                    <div class="city-name"><span class="dot"></span> ${spot.city}</div>
+                    <div class="address-detail">📍 ${spot.address}</div>
+                    <div class="phone-number">📞 <a href="tel:${spot.phone.replace(/\s/g, '')}">${spot.phone}</a></div>
+                    <div class="work-time">🕘 ${spot.workTime}</div>
+                    <div class="map-hint-small">кликните — покажем на карте</div>
+                </div>
+            `).join('');
+
+            document.querySelectorAll('.address-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const id = +card.dataset.id;
+                    if (currentMap && placemarks[id]) {
+                        currentMap.panTo(placemarks[id].geometry.getCoordinates(), { duration: 600, flying: true });
+                        placemarks[id].balloon.open();
+                        document.getElementById('yandexMap')?.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+        }
+
+        function renderMenu() {
+            const container = document.getElementById('menuContainer');
+            if (!container) return;
+            container.innerHTML = menuList.map(item => `
+                <div class="menu-item">
+                    <img class="menu-img" src="${item.img}" alt="${item.name}" loading="lazy">
+                    <div class="menu-info">
+                        <div class="menu-name">${item.name}</div>
+                        <div class="menu-desc">${item.desc}</div>
+                        <div class="menu-price">${item.price}</div>
+                    </div>
+                    <div class="menu-tooltip">
+                        <div class="tooltip-row"><span class="tooltip-label">Состав:</span> ${item.composition}</div>
+                        <div class="tooltip-row"><span class="tooltip-label">Калорийность:</span> ${item.calories}</div>
+                        <div class="tooltip-row"><span class="tooltip-label">Подача:</span> ${item.prepTime}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Для мобильных: показ тултипа по касанию
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    // Проверяем, что это мобильное устройство (touch)
+                    if (window.matchMedia('(hover: none)').matches) {
+                        e.preventDefault();
+                        // Закрываем все остальные
+                        document.querySelectorAll('.menu-item.show-tooltip').forEach(el => {
+                            if (el !== this) el.classList.remove('show-tooltip');
+                        });
+                        this.classList.toggle('show-tooltip');
+                    }
+                });
+            });
+
+            // Закрытие тултипа при клике вне карточки
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.menu-item')) {
+                    document.querySelectorAll('.menu-item.show-tooltip').forEach(el => el.classList.remove('show-tooltip'));
+                }
+            });
+        }
+
+        function initMap() {
+            if (typeof ymaps === 'undefined') return;
+            ymaps.ready(() => {
+                const mapDiv = document.getElementById('yandexMap');
+                if (!mapDiv) return;
+                currentMap = new ymaps.Map(mapDiv, {
+                    center: coffeeSpots[0]?.coords || [48.045, 37.961],
+                    zoom: 12,
+                    controls: ['zoomControl']
+                });
+                placemarks = coffeeSpots.map((spot, i) => {
+                    const pm = new ymaps.Placemark(spot.coords, {
+                        balloonContentHeader: `🐾 ${spot.city}`,
+                        balloonContentBody: `📍 ${spot.fullAddr}<br>📞 ${spot.phone}<br>🕒 ${spot.workTime}`,
+                        hintContent: spot.address
+                    }, {
+                        preset: 'islands#orangeIcon',
+                        iconColor: '#E07B4C'
+                    });
+                    currentMap.geoObjects.add(pm);
+                    return pm;
+                });
+                if (coffeeSpots.length > 1) {
+                    currentMap.setBounds(coffeeSpots.map(s => s.coords), { zoomMargin: 50 });
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setupLogo();
+            renderAddresses();
+            renderMenu();
+            if (typeof ymaps !== 'undefined') {
+                initMap();
+            } else {
+                let attempts = 0;
+                const checkInterval = setInterval(() => {
+                    if (typeof ymaps !== 'undefined') {
+                        clearInterval(checkInterval);
+                        initMap();
+                    } else {
+                        attempts++;
+                        if (attempts > 10) clearInterval(checkInterval);
+                    }
+                }, 300);
+            }
+        });
+    </script>
+</body>
+</html>
